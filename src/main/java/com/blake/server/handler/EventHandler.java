@@ -3,7 +3,6 @@ package com.blake.server.handler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
 
+import com.blake.server.request.RequestUtils;
 import com.blake.server.response.UnifiedResponse;
 import com.blake.storage.hadoop.HadoopServerImpl;
 
@@ -51,52 +50,15 @@ public class EventHandler {
 			return;
 		}
 		
-		JSONObject jo = null;
-		try{
+		RequestUtils requestUtils = RequestUtils.parseRequest(buffer.toString(), response);
+		if(null == requestUtils || !requestUtils.checkParameter(response)) { 
 			
-			jo =   JSONObject.fromObject(URLDecoder.decode(buffer.toString(), HTTP.UTF_8));
-			
-		} catch(Exception e) {
-			
-			logger.error("message is not wrapped using json, please check " + e);
+			logger.error("request parameter is not correct, please check ");
 			UnifiedResponse.sendErrResponse(response, 5002);
 			return;
 		}
-		/**
-		 * json object contains 
-		 * 		
-		 * 		type  : insert/delete
-		 * 		place : hadoop/hbase
-		 * 		data  : jsonObject
-		 * 		path  : storage path 
-		 * 
-		 */
-		String type = (String) jo.get("type");
-		if(StringUtils.isBlank(type) || !type.equals("insert")) {
-			
-			logger.error("json type is not correct, please check ");
-			UnifiedResponse.sendErrResponse(response, 5003);
-			return;
-		}
 		
-		String place = (String) jo.get("place");
-		if(StringUtils.isBlank(place)) {
-			
-			logger.error("json place is not correct, please check ");
-			UnifiedResponse.sendErrResponse(response, 5004);
-			return;
-		}
-		
-		String path = (String) jo.get("path");
-		if(StringUtils.isBlank(path)) {
-			
-			logger.error("json path is not correct, please check ");
-			UnifiedResponse.sendErrResponse(response, 5005);
-			return;
-		}
-		
-		JSONObject data = (JSONObject) jo.get("data");
-		HadoopServerImpl.writeToHdfs(path, data);
+		HadoopServerImpl.writeToHdfs(requestUtils.getPath(), requestUtils.getData(), requestUtils.isAppend());
 		UnifiedResponse.sendSuccessResponse(response);
 	}
 

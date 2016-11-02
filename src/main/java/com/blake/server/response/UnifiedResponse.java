@@ -14,7 +14,7 @@ public class UnifiedResponse {
 
 	public static void sendErrResponse(HttpServletResponse response, int errcode) {
 
-		String respStr = "{\"result\":false,\"err\":1001,\"ver\":1,\"desc\":\"check your search key or narrow search range\"}";
+		String respStr = "{\"result\":false,\"err\":5000,\"ver\":1,\"desc\":\"transfer data is not json type\"}";
 		if(logger.isDebugEnabled()) {
 			
 			logger.debug("the response is {}" , respStr);

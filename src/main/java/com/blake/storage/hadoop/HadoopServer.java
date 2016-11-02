@@ -18,6 +18,7 @@ public class HadoopServer {
 	static {
 		
         conf.set("fs.defaultFS", PATH); 
+        conf.setBoolean("dfs.support.append", true);  
         try {
 			fs = (DistributedFileSystem) FileSystem.get(conf);
 		} catch (IOException e) {

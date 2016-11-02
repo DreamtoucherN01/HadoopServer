@@ -1,7 +1,6 @@
 package com.blake.storage.hadoop;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,13 +8,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import net.sf.json.JSONObject;
+
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
-
-import com.blake.server.handler.EventHandler;
 
 public class HadoopServerImpl extends HadoopServer {
 
@@ -65,6 +64,29 @@ public class HadoopServerImpl extends HadoopServer {
 			e.printStackTrace();  
 		}  
 	} 
+	
+
+	public static void writeToHdfs(String path, JSONObject data, boolean append) {
+
+		if(append == false) {
+			
+			writeToHdfs(path, data);
+		} else {
+			
+			try {
+				
+				FSDataOutputStream fout = fs.append(new Path(path));
+				fout.write(data.toString().getBytes());
+				fout.flush();
+				fout.close();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}  
+		}
+		
+	}  
 	
 	public static void writeToHdfs(String path, Object data) {
 	
@@ -132,5 +154,5 @@ public class HadoopServerImpl extends HadoopServer {
 		} catch (Exception e) {  
 			e.printStackTrace();  
 		}  
-	}  
+	}
 }
