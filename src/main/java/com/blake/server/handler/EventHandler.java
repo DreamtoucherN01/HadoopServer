@@ -7,9 +7,6 @@ import java.io.InputStreamReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.blake.server.request.RequestUtils;
@@ -45,16 +42,18 @@ public class EventHandler {
 			
 		} catch (IOException e) {
 
-			logger.error("error when reading transferring data " + e);
-			UnifiedResponse.sendErrResponse(response, 5001);
+			String msg = "error when reading transferring data " + e;
+			logger.error(msg);
+			UnifiedResponse.sendErrResponse(response, 5001, msg);
 			return;
 		}
 		
 		RequestUtils requestUtils = RequestUtils.parseRequest(buffer.toString(), response);
 		if(null == requestUtils || !requestUtils.checkParameter(response)) { 
 			
-			logger.error("request parameter is not correct, please check ");
-			UnifiedResponse.sendErrResponse(response, 5002);
+			String msg = "request parameter is not correct, please check ";
+			logger.error("");
+			UnifiedResponse.sendErrResponse(response, 5002, msg);
 			return;
 		}
 		

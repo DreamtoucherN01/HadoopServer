@@ -30,7 +30,14 @@ public class JsonParser {
 		boolean ret = true;
 		if(jo.containsKey(name)){
 			
-			ret = jo.getBoolean(name);
+			try{
+				
+				ret = jo.getBoolean(name);
+			} catch (Exception e) {
+				
+				logger.error("json "+ name +" is not correct, please check " + e);
+				return true;
+			}
 		}
 		return ret;
 	}

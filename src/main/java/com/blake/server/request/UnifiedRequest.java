@@ -31,7 +31,8 @@ public class UnifiedRequest implements HttpRequestHandler{
 		response.setContentType("application/json; charset=UTF-8");
 		if(HttpMethod.fromString(request.getMethod()) != HttpMethod.POST) {
 			
-			UnifiedResponse.sendErrResponse(response, 1001);
+			String msg = "Not using PPOST request, please check";
+			UnifiedResponse.sendErrResponse(response, 1001, msg);
 		}
 		
 		logger.info("get request from : " + request.getRemoteAddr() );

@@ -12,9 +12,9 @@ public class UnifiedResponse {
 	
 	final static Logger logger = LoggerFactory.getLogger(UnifiedResponse.class);
 
-	public static void sendErrResponse(HttpServletResponse response, int errcode) {
+	public static void sendErrResponse(HttpServletResponse response, int errcode, String msg) {
 
-		String respStr = "{\"result\":false,\"err\":5000,\"ver\":1,\"desc\":\"transfer data is not json type\"}";
+		String respStr = "{\"result\":false,\"err\":"+ errcode +",\"ver\":1,\"desc\":\""+ msg +" \"}";
 		if(logger.isDebugEnabled()) {
 			
 			logger.debug("the response is {}" , respStr);

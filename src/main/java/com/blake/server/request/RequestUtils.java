@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.protocol.HTTP;
 import org.apache.log4j.Logger;
 
-import com.blake.server.response.UnifiedResponse;
 import com.blake.util.JsonParser;
 
 public class RequestUtils {
