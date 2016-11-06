@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 
 public class HadoopServerImpl extends HadoopServer {
 
-	Logger logger = Logger.getLogger(HadoopServerImpl.class);
+	static Logger logger = Logger.getLogger(HadoopServerImpl.class);
 	
 	public static void mkdir(String dir) throws IOException{
 		
@@ -68,6 +68,8 @@ public class HadoopServerImpl extends HadoopServer {
 
 	public static void writeToHdfs(String path, JSONObject data, boolean append) {
 
+		append = HadoopServerImpl.checkFileExist(path);
+		
 		if(append == false) {
 			
 			writeToHdfs(path, data);
@@ -133,26 +135,16 @@ public class HadoopServerImpl extends HadoopServer {
 		}  
 	}  
 	
-	public static void checkFileExist(String file) {
+	public static boolean checkFileExist(String file) {
 		
 		try {
 			
-			Path a= fs.getHomeDirectory();  
-			System.out.println("main path:"+a.toString());  
-        
 			Path f = new Path(file);  
-			boolean exist = fs.exists(f);  
-			System.out.println("Whether exist of this file:" + exist);  
+			return fs.exists(f);  
         
-//			//ɾ���ļ�  
-//			if (exist) {  
-//				boolean isDeleted = fs.delete(f, false);  
-//				if(isDeleted) {  
-//					System.out.println("Delete success");  
-//				}                 
-//			}  
 		} catch (Exception e) {  
-			e.printStackTrace();  
+			
+			return false;
 		}  
 	}
 }

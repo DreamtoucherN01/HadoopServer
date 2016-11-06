@@ -52,11 +52,17 @@ public class EventHandler {
 		if(null == requestUtils || !requestUtils.checkParameter(response)) { 
 			
 			String msg = "request parameter is not correct, please check ";
-			logger.error("");
+			logger.error(msg);
 			UnifiedResponse.sendErrResponse(response, 5002, msg);
 			return;
 		}
 		
+		if(logger.isDebugEnabled()) {
+			
+			logger.debug(" requestUtils path is : " + requestUtils.getPath());
+			logger.debug(" requestUtils data is : " + requestUtils.getData());
+			logger.debug(" requestUtils append is : " + requestUtils.isAppend());
+		}
 		HadoopServerImpl.writeToHdfs(requestUtils.getPath(), requestUtils.getData(), requestUtils.isAppend());
 		UnifiedResponse.sendSuccessResponse(response);
 	}
