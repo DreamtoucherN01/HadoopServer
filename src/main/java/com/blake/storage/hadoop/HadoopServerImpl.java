@@ -44,7 +44,7 @@ public class HadoopServerImpl extends HadoopServer {
         }  
     }  
 	
-	public static void readFileFromHdfs(String path) {  
+	public static String readFileFromHdfs(String path) {  
 
 		try {
 			
@@ -53,41 +53,34 @@ public class HadoopServerImpl extends HadoopServer {
 			InputStreamReader isr = new InputStreamReader(dis, "utf-8");  
 			BufferedReader br = new BufferedReader(isr);  
 			String str = "";  
+			StringBuilder sb = new StringBuilder();
 			while ((str = br.readLine()) !=null) { 
 				
-			    System.out.println(str);  
+			    sb.append(str);
 			}  
 			br.close();  
 			isr.close();  
 			dis.close();  
+			return sb.toString();
 		} catch (Exception e) {  
-			e.printStackTrace();  
+			return null;
 		}  
 	} 
 	
 
-	public static void writeToHdfs(String path, JSONObject data, boolean append) {
+	public static void appendToHdfs(String path, JSONObject data) {
 
-		append = HadoopServerImpl.checkFileExist(path);
-		
-		if(append == false) {
+		try {
 			
-			writeToHdfs(path, data);
-		} else {
-			
-			try {
-				
-				FSDataOutputStream fout = fs.append(new Path(path));
-				fout.write(data.toString().getBytes());
-				fout.flush();
-				fout.close();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}  
-		}
-		
+			FSDataOutputStream fout = fs.append(new Path(path));
+			fout.write(data.toString().getBytes());
+			fout.flush();
+			fout.close();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
 	}  
 	
 	public static void writeToHdfs(String path, Object data) {

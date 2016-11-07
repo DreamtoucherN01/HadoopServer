@@ -80,11 +80,10 @@ public class RequestUtils {
 	}
 	
 
-	public boolean checkParameter(HttpServletResponse response) {
+	public boolean checkParameter() {
 
 		
-		if(StringUtils.isBlank(this.type) || !this.type.equals("insert") 
-				|| StringUtils.isBlank(this.place) || StringUtils.isBlank(this.path)) {
+		if(StringUtils.isBlank(this.type) || StringUtils.isBlank(this.place) || StringUtils.isBlank(this.path)) {
 			
 			return false;
 		}

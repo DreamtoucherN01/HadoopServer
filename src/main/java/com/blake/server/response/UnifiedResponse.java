@@ -49,6 +49,29 @@ public class UnifiedResponse {
 			logger.error("catch IOEXception : {}", e);
 		}
 	}
+	
+	public static void sendSuccessResponseWithData(HttpServletResponse response, Object data) {
+
+		JSONObject result =  new JSONObject();
+		result.put("result", true);
+		result.put("err", 0);
+		result.put("data", data); 
+		
+		if(logger.isDebugEnabled()) {
+			
+			logger.debug("the response is {}" , result.toString());
+		}
+		response.setContentLength(result.toString().getBytes().length);
+		try {
+			
+			response.getWriter().write(result.toString());
+			response.getWriter().close();
+			return;
+		} catch (IOException e) {
+			
+			logger.error("catch IOEXception : {}", e);
+		}
+	}
 
 	public static void sendSuccessResponse(HttpServletResponse response,
 			long count) {

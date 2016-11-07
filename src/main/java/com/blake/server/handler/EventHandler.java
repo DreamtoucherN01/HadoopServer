@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.blake.server.request.RequestUtils;
 import com.blake.server.response.UnifiedResponse;
+import com.blake.server.type.RequestType;
 import com.blake.storage.hadoop.HadoopServerImpl;
 
 public class EventHandler {
@@ -49,7 +50,7 @@ public class EventHandler {
 		}
 		
 		RequestUtils requestUtils = RequestUtils.parseRequest(buffer.toString(), response);
-		if(null == requestUtils || !requestUtils.checkParameter(response)) { 
+		if(null == requestUtils || !requestUtils.checkParameter()) { 
 			
 			String msg = "request parameter is not correct, please check ";
 			logger.error(msg);
@@ -63,8 +64,27 @@ public class EventHandler {
 			logger.debug(" requestUtils data is : " + requestUtils.getData());
 			logger.debug(" requestUtils append is : " + requestUtils.isAppend());
 		}
-		HadoopServerImpl.writeToHdfs(requestUtils.getPath(), requestUtils.getData(), requestUtils.isAppend());
-		UnifiedResponse.sendSuccessResponse(response);
+		if(RequestType.fromString(requestUtils.getType()) == RequestType.insert) {
+			
+			if(HadoopServerImpl.checkFileExist(requestUtils.getPath())) {
+				
+				HadoopServerImpl.appendToHdfs(requestUtils.getPath(), requestUtils.getData());
+			} else {
+				
+				HadoopServerImpl.writeToHdfs(requestUtils.getPath(), requestUtils.getData());
+			}
+			
+			UnifiedResponse.sendSuccessResponse(response);
+		}
+		
+		if(RequestType.fromString(requestUtils.getType()) == RequestType.query) {
+			
+			String data = HadoopServerImpl.readFileFromHdfs(requestUtils.getPath());
+			UnifiedResponse.sendSuccessResponseWithData(response, data);
+		}
+		
+		UnifiedResponse.sendErrResponse(response, 4000, "request type not defined or recognized");
+		
 	}
 
 }
